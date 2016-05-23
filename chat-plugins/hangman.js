@@ -195,12 +195,13 @@ class Hangman extends Rooms.RoomGame {
 }
 
 exports.commands = {
+	hang: 'hangman',
 	hangman: {
 		create: 'new',
 		new: function (target, room, user) {
 			let params = target.split(',');
 
-			if (!this.can('minigame', null, room)) return false;
+			if (!this.can('mute', null, room)) return false;
 			if (room.hangmanDisabled) return this.errorReply("Hangman is disabled for this room.");
 			if (!this.canTalk()) return this.errorReply("You cannot do this while unable to talk.");
 			if (room.game) return this.errorReply("There is already a game of " + room.game.title + " in progress in this room.");
@@ -237,7 +238,7 @@ exports.commands = {
 
 		stop: 'end',
 		end: function (target, room, user) {
-			if (!this.can('minigame', null, room)) return false;
+			if (!this.can('mute', null, room)) return false;
 			if (!this.canTalk()) return this.errorReply("You cannot do this while unable to talk.");
 			if (!room.game || room.game.gameid !== 'hangman') return this.errorReply("There is no game of hangman running in this room.");
 
@@ -247,7 +248,7 @@ exports.commands = {
 		endhelp: ["/hangman end - Ends the game of hangman before the man is hanged or word is guessed. Requires: % @ # & ~"],
 
 		disable: function (target, room, user) {
-			if (!this.can('gamemanagement', null, room)) return;
+			if (!this.can('mute', null, room)) return;
 			if (room.hangmanDisabled) {
 				return this.errorReply("Hangman is already disabled.");
 			}
@@ -260,7 +261,7 @@ exports.commands = {
 		},
 
 		enable: function (target, room, user) {
-			if (!this.can('gamemanagement', null, room)) return;
+			if (!this.can('mute', null, room)) return;
 			if (!room.hangmanDisabled) {
 				return this.errorReply("Hangman is already enabled.");
 			}
@@ -270,6 +271,10 @@ exports.commands = {
 				Rooms.global.writeChatRoomData();
 			}
 			return this.sendReply("Hangman has been enabled for this room.");
+		},
+
+		help: function (target, room, user) {
+			this.parse('/help hangman');
 		},
 
 		display: function (target, room, user) {
@@ -284,7 +289,6 @@ exports.commands = {
 			return this.parse('/help hangman');
 		},
 	},
-
 	hangmanhelp: ["/hangman allows users to play the popular game hangman in PS rooms.",
 				"Accepts the following commands:",
 				"/hangman create [word], [hint] - Makes a new hangman game. Requires: % @ # & ~",

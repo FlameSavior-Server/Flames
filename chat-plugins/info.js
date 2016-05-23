@@ -67,8 +67,7 @@ exports.commands = {
 				publicrooms += output;
 			}
 		}
-		buf += '<br />Rooms: ' + (publicrooms || '<em>(no public rooms)</em>');
-
+		buf += '<br />Rooms: ' + (targetUser.hidden && !user.can('hotpatch') ? '<em>(no public rooms)</em>' : (publicrooms || '<em>(no public rooms)</em>'));
 		if (!showAll) {
 			return this.sendReplyBox(buf);
 		}
@@ -219,7 +218,6 @@ exports.commands = {
 	dex: 'data',
 	pokedex: 'data',
 	data: function (target, room, user, connection, cmd) {
-		if (toId(target) === 'constructor') return this.errorReply("Invalid data lookup command.");
 		if (!this.runBroadcast()) return;
 
 		let buffer = '';
@@ -884,21 +882,6 @@ exports.commands = {
 	 * Informational commands
 	 *********************************************************/
 
-	uptime: function (target, room, user) {
-		if (!this.runBroadcast()) return;
-		let uptime = process.uptime();
-		let uptimeText;
-		if (uptime > 24 * 60 * 60) {
-			let uptimeDays = Math.floor(uptime / (24 * 60 * 60));
-			uptimeText = uptimeDays + " " + (uptimeDays === 1 ? "day" : "days");
-			let uptimeHours = Math.floor(uptime / (60 * 60)) - uptimeDays * 24;
-			if (uptimeHours) uptimeText += ", " + uptimeHours + " " + (uptimeHours === 1 ? "hour" : "hours");
-		} else {
-			uptimeText = Tools.toDurationString(uptime * 1000);
-		}
-		this.sendReplyBox("Uptime: <b>" + uptimeText + "</b>");
-	},
-
 	groups: function (target, room, user) {
 		if (!this.runBroadcast()) return;
 		this.sendReplyBox(
@@ -922,8 +905,9 @@ exports.commands = {
 			"Pok&eacute;mon Showdown is open source:<br />" +
 			"- Language: JavaScript (Node.js)<br />" +
 			"- <a href=\"https://github.com/Zarel/Pokemon-Showdown/commits/master\">What's new?</a><br />" +
-			"- <a href=\"https://github.com/Zarel/Pokemon-Showdown\">Server source code</a><br />" +
-			"- <a href=\"https://github.com/Zarel/Pokemon-Showdown-Client\">Client source code</a>"
+			"- <a href=\"https://github.com/panpawn/Pokemon-Showdown\">Gold's source code</a><br />" +
+			"- <a href=\"https://github.com/Zarel/Pokemon-Showdown\">Main's Client source code</a><br />" +
+			"- <a href=\"https://github.com/Zarel/Pokemon-Showdown\">Main's Server source code</a>"
 		);
 	},
 	opensourcehelp: ["/opensource - Links to PS's source code repository.",
@@ -1625,7 +1609,7 @@ exports.commands = {
 		target = this.canHTML(target);
 		if (!target) return;
 
-		if (user.userid === 'github') {
+		if (user.userid === 'ponybot') {
 			if (!this.can('announce', null, room)) return;
 			if (message.charAt(0) === '!') this.broadcasting = true;
 		} else {

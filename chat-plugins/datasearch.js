@@ -76,7 +76,7 @@ exports.commands = {
 		if (!this.canBroadcast()) return;
 		if (!target) return this.parse('/help dexsearch');
 
-		return runSearch({
+		runSearch({
 			target: target,
 			cmd: 'dexsearch',
 			canAll: (!this.broadcastMessage || room.isPersonal),
@@ -126,7 +126,7 @@ exports.commands = {
 		}
 		if (!qty) targetsBuffer.push("random1");
 
-		return runSearch({
+		runSearch({
 			target: targetsBuffer.join(","),
 			cmd: 'randpoke',
 			canAll: (!this.broadcastMessage || room.isPersonal),
@@ -152,7 +152,7 @@ exports.commands = {
 		if (!this.canBroadcast()) return;
 		if (!target) return this.parse('/help movesearch');
 
-		return runSearch({
+		runSearch({
 			target: target,
 			cmd: 'movesearch',
 			canAll: (!this.broadcastMessage || room.isPersonal),
@@ -174,8 +174,8 @@ exports.commands = {
 		"Stat boosts must be preceded with 'boosts ', e.g., 'boosts attack' searches for moves that boost the attack stat.",
 		"Inequality ranges use the characters '>' and '<' though they behave as '≥' and '≤', e.g., 'bp > 100' searches for all moves equal to and greater than 100 base power.",
 		"Parameters can be excluded through the use of '!', e.g., !water type' excludes all water type moves.",
-		"Valid flags are: authentic (bypasses substitute), bite, bullet, contact, defrost, powder, pulse, punch, secondary, snatch, and sound.",
-		"If a Pok\u00e9mon is included as a parameter, moves will be searched from its movepool.",
+		"Valid flags are: authentic (bypasses substitute), bite, bullet, contact, defrost, powder, pulse, punch, secondary, snatch, sound",
+		"If a Pok\u00e9mon is included as a parameter, moves will be searched from it's movepool.",
 		"The order of the parameters does not matter."],
 
 	isearch: 'itemsearch',
@@ -183,7 +183,7 @@ exports.commands = {
 		if (!this.canBroadcast()) return;
 		if (!target) return this.parse('/help itemsearch');
 
-		return runSearch({
+		runSearch({
 			target: target,
 			cmd: 'itemsearch',
 			canAll: (!this.broadcastMessage || room.isPersonal),
@@ -217,7 +217,7 @@ exports.commands = {
 		if (!this.canBroadcast()) return;
 		if (!target) return this.parse('/help learn');
 
-		return runSearch({
+		runSearch({
 			target: target,
 			cmd: 'learn',
 			message: cmd,
