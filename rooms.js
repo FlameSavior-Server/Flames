@@ -38,6 +38,7 @@ let Room = (() => {
 		this.bannedIps = Object.create(null);
 		this.muteQueue = [];
 		this.muteTimer = null;
+		this.messageCount = 0;
 	}
 	Room.prototype.title = "";
 	Room.prototype.type = 'chat';
@@ -102,8 +103,14 @@ let Room = (() => {
 
 		message = CommandParser.parse(message, this, user, connection);
 
-		if (message && message !== true && typeof message.then !== 'function') {
-			this.add('|c|' + user.getIdentity(this.id) + '|' + message);
+		if (message && message !== true) {
+			if (Users.ShadowBan.checkBanned(user)) {
+				Users.ShadowBan.addMessage(user, "To " + this.id, message);
+				connection.sendTo(this, '|c|' + user.getIdentity(this.id) + '|' + message);
+			} else {
+				this.add('|c|' + user.getIdentity(this.id) + '|' + message);
+				this.messageCount++;
+			}
 		}
 		this.update();
 	};
@@ -765,6 +772,7 @@ let GlobalRoom = (() => {
 			this.maxUsersDate = Date.now();
 		}
 
+		Gold.friendsNotify(user);
 		return user;
 	};
 	GlobalRoom.prototype.onRename = function (user, oldid, joining) {
@@ -891,7 +899,7 @@ let BattleRoom = (() => {
 		this.sideTurnTicks = [0, 0];
 		this.disconnectTickDiff = [0, 0];
 
-		if (Config.forcetimer) this.requestKickInactive(false);
+		if (Config.forcetimer || this.format === 'outurbo') this.requestKickInactive(false);
 	}
 	BattleRoom.prototype = Object.create(Room.prototype);
 	BattleRoom.prototype.type = 'battle';
@@ -1120,7 +1128,9 @@ let BattleRoom = (() => {
 			maxTicksLeft = 6;
 		}
 		if (!this.rated && !this.tour) maxTicksLeft = 30;
-
+		if (this.format === "outurbo") {
+			maxTicksLeft = 1;
+		}
 		this.sideTurnTicks = [maxTicksLeft, maxTicksLeft];
 
 		let inactiveSide = this.getInactiveSide();
@@ -1348,6 +1358,16 @@ let ChatRoom = (() => {
 			this.userList = this.getUserList();
 			this.reportJoinsQueue = [];
 		}
+
+		this.deleteInactive = setTimeout(function () {
+			if (!this.protect && !this.isOfficial && !this.isPrivate && !this.isPersonal && !this.isStaff && this.messageCount < 40) {
+				Rooms.global.deregisterChatRoom(this.id);
+				this.addRaw('<font color=red><b>This room has been automatically deleted due to inactivity.  It will be removed upon the next server restart.</b></font>');
+				if (this.id !== 'global') this.update();
+				this.modchat = '~';
+				Rooms('staff').add("|raw|<font color=red><b>" + this.title + " has been automatically deleted from the server due to inactivity.</b></font>").update();
+			}
+		}.bind(this), 2 * 24 * 60 * 60 * 1000); //48 hours
 	}
 	ChatRoom.prototype = Object.create(Room.prototype);
 	ChatRoom.prototype.type = 'chat';
@@ -1443,7 +1463,7 @@ let ChatRoom = (() => {
 		let buffer = '';
 		let counter = 0;
 		for (let i in this.users) {
-			if (!this.users[i].named) {
+			if (!this.users[i].named || this.users[i].hidden) {
 				continue;
 			}
 			counter++;
@@ -1500,7 +1520,7 @@ let ChatRoom = (() => {
 	};
 	ChatRoom.prototype.getIntroMessage = function (user) {
 		let message = '';
-		if (this.introMessage) message += '\n|raw|<div class="infobox infobox-roomintro"><div' + (!this.isOfficial ? ' class="infobox-limited"' : '') + '>' + this.introMessage + '</div>';
+		if (this.introMessage) message += '\n|raw|<div class="infobox">' + this.introMessage + '</div>';
 		if (this.staffMessage && user.can('mute', null, this)) message += (message ? '<br />' : '\n|raw|<div class="infobox">') + '(Staff intro:)<br /><div>' + this.staffMessage + '</div>';
 		if (this.modchat) {
 			message += (message ? '<br />' : '\n|raw|<div class="infobox">') + '<div class="broadcast-red">' +
@@ -1520,7 +1540,7 @@ let ChatRoom = (() => {
 		if (!user) return false; // ???
 		if (this.users[user.userid]) return user;
 
-		if (user.named) {
+		if (user.named && !user.hidden) {
 			this.reportJoin('j', user.getIdentity(this.id));
 		}
 
