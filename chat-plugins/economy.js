@@ -6,12 +6,19 @@ let path = require('path');
 let shop = [
 	['Symbol', 'Buys a custom symbol to go infront of name and puts you at top of userlist. (Temporary until restart, certain symbols are blocked)', 5],
 	['Fix', 'Buys the ability to alter your current custom avatar or trainer card. (don\'t buy if you have neither)', 10],
+	['Declare', 'Advertisement declare for a room on the server from an Administrator / Leader', 10],
+	['Room Rename', 'Buys a room rename to rename your room', 15],
 	['Avatar', 'Buys an custom avatar to be applied to your name (You supply. Images larger than 80x80 may not show correctly)', 20],
 	['League Room', 'Purchases a room at a reduced rate for use with a league.  A roster must be supplied with at least 10 members for this room.', 25],
 	['Trainer', 'Buys a trainer card which shows information through a command. (You supply, can be refused)', 40],
+	['Emote', 'A custom chat emoticon such as \"xaa\" - must be 50x50', 45],
 	['Staff Help', 'Staff member will help set up roomintros and anything else needed in a room. Response may not be immediate.', 50],
+	['Color', 'This gives your username a custom color on the userlist and in all rooms (existing at time of purchase', 60,]
+	['Userlist Bg color', '"Userlist Background Color", "Buys a custom Userlist background color. PM prince sky to get it. Check userlist background of prince sky for example', 65]
 	['Icon', 'Buy a custom icon that can be applied to the rooms you want. You must take into account that the provided image should be 32 x 32', 75],
 	['Room', 'Buys a chatroom for you to own. (within reason, can be refused)', 100],
+	['Custom PM-Box Theme', 'Buys a customizable PM-Box Theme for people to see when they pm you. PM Kevin neo ryan to get it customized. Check Pm-box of Kevin Neo Ryan',120],
+	
 ];
 
 let shopDisplay = getShopDisplay(shop);
