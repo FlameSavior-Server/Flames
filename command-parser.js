@@ -15,11 +15,8 @@
  */
 
 /*
-
 To reload chat commands:
-
 /hotpatch chat
-
 */
 
 'use strict';
@@ -38,7 +35,6 @@ const BROADCAST_TOKEN = '!';
 
 const fs = require('fs');
 const path = require('path');
-const parseEmoticons = require('./chat-plugins/emoticons').parseEmoticons;
 
 /*********************************************************
  * Load command files
@@ -346,9 +342,17 @@ class CommandContext {
 				return false;
 			}
 
-			if (!this.checkBanwords(room, message) && !user.can('mute', null, room)) {
-				this.errorReply("Your message contained banned words.");
-				return false;
+			if (!this.checkBanwords(room, message)) {
+				if (room.id === 'lobby' && !user.can('hotpatch')) {
+					this.errorReply("Your message contained banned words.  You have been muted for 3 minutes as a result.");
+					this.privateModCommand("(" + user.name + " was automatically muted for saying: " + message + ")");
+					room.mute(user, 3 * 60 * 1000);
+					room.add(user.name + " was automatically muted by the server for 3 minutes. (Your message contained a banned word.)").update();
+					return false;
+				} else if (!user.can('mute', null, room)) {
+					this.errorReply("Your message contained banned words.");
+					return false;
+				}
 			}
 
 			if (room && room.id === 'lobby') {
@@ -640,8 +644,22 @@ let parse = exports.parse = function (message, room, user, connection, levelsDee
 	}
 
 	message = context.canTalk(message);
+	if (!message) return false;
 
-	if (parseEmoticons(message, room, user)) return;
+	if (user.registered && global.Gold.tells) {
+		let alts = user.getAlts();
+		alts.push(user.name);
+		alts.map(toId).forEach(function (user) {
+			if (Gold.tells[user]) {
+				Gold.tells[user].forEach(connection.sendTo.bind(connection, room));
+				delete Gold.tells[user];
+				Gold.saveTells();
+			}
+		});
+	}
+	try {
+		if (!Gold.emoticons.processChatData(user, room, connection, message)) return false;
+	} catch (e) {}
 
 	return message || false;
 };
