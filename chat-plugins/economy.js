@@ -11,8 +11,8 @@ let shop = [
 	['Avatar', 'Buys an custom avatar to be applied to your name (You supply. Images larger than 80x80 may not show correctly)', 20],
 	['League Room', 'Purchases a room at a reduced rate for use with a league.  A roster must be supplied with at least 10 members for this room.', 25],
 	['Trainer', 'Buys a trainer card which shows information through a command. (You supply, can be refused)', 40],
-	['Emote', 'A custom chat emoticon such as \"xaa\" - must be 50x50', 45],
-	['Staff Help', 'Staff member will help set up roomintros and anything else needed in a room. Response may not be immediate.', 50],
+	['Emote', 'A custom chat emoticon such as \"xaa\" - must be 50x50', 50],
+	['Sparkle', 'Get Sparkles in ur name in userlist Like in Prince Sky', 55],
 	['Color', 'This gives your username a custom color on the userlist and in all rooms (existing at time of purchase', 60,]
 	['Userlist Bg color', '"Userlist Background Color", "Buys a custom Userlist background color. PM prince sky to get it. Check userlist background of prince sky for example', 65]
 	['Icon', 'Buy a custom icon that can be applied to the rooms you want. You must take into account that the provided image should be 32 x 32', 75],
