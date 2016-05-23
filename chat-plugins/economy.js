@@ -14,7 +14,7 @@ let shop = [
 	['Emote', 'A custom chat emoticon such as \"xaa\" - must be 50x50', 50],
 	['Sparkle', 'Get Sparkles in ur name in userlist Like in Prince Sky', 55],
 	['Color', 'This gives your username a custom color on the userlist and in all rooms (existing at time of purchase', 60,]
-	['Userlist Bg color', '"Userlist Background Color", "Buys a custom Userlist background color. PM prince sky to get it. Check userlist background of prince sky for example', 65]
+	['Userlist Bg color', 'Buys a custom Userlist background color. PM prince sky to get it. Check userlist background of prince sky for example', 65]
 	['Icon', 'Buy a custom icon that can be applied to the rooms you want. You must take into account that the provided image should be 32 x 32', 75],
 	['Room', 'Buys a chatroom for you to own. (within reason, can be refused)', 100],
 	['Custom PM-Box Theme', 'Buys a customizable PM-Box Theme for people to see when they pm you. PM Kevin neo ryan to get it customized. Check Pm-box of Kevin Neo Ryan',120],
